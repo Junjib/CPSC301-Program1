@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,35 +17,18 @@ void Display(PERSON a[], int N);
 void FindRichest(PERSON a[], int N);
 void Deposit(string name, PERSON a[], int N);
 void NewCopy(string file, PERSON a[], int N);
+int Counter(string file);
+void BuildArray(int N, PERSON a[], string file);
 
 int main()
 {
-	int N = 6;
+	int N = Counter("data.txt");
+  string fullName;
 	int choice = 0;
-	PERSON arr[6];
-	PERSON obj;
-	string fName, lName, name;
-	ifstream readData;
-	readData.open("data.txt");
+	PERSON arr[N];
 
-	// Checks if file successfully opens
-	if(readData.fail())
-	{
-		cout << "Error\n";
-		return 1;
-	}
+  BuildArray(N, arr, "data.txt");
 
-	// Stores PERSON obj into the PERSON array
-	for(int i = 0; i < 6; i++)
-	{
-		readData >> fName;
-		readData >> lName;
-		readData >> obj.Balance;
-		name = fName + " " + lName;
-		strcpy(obj.Name, name.c_str());
-		arr[i] = obj;
-	}
-	readData.close();
 	// ===================================================
 	// Menu for selecting which function to execute
 	do
@@ -69,8 +53,8 @@ int main()
 		case 3:
 			cout << "Enter your full name to deposit money: ";
 			cin.ignore();
-			getline(cin, name);
-			Deposit(name, arr, N);
+			getline(cin, fullName);
+			Deposit(fullName, arr, N);
 			NewCopy("data.txt", arr, N);
 			break;
 		case -1:
@@ -164,6 +148,47 @@ void NewCopy(string file, PERSON a[], int N)
 	{
 		writeData << a[i].Name << " " << fixed << setprecision(2) << a[i].Balance << endl;
 	}
-
 	writeData.close();
+}
+
+int Counter(string file)
+{
+  int N = 0;
+  string readLine;
+  ifstream readData2;
+  readData2.open(file);
+  while(readData2)
+  {
+    getline(readData2, readLine);
+    N++;
+  }
+  N--;
+  readData2.close();
+  return N;
+}
+
+void BuildArray(int N, PERSON a[], string file)
+{
+  PERSON obj;
+  string fName, lName, name;
+  ifstream readData;
+  readData.open("data.txt");
+
+  // Checks if file successfully opens
+  if(readData.fail())
+  {
+    cout << "Error\n";
+  }
+
+  // Stores PERSON obj into the PERSON array
+  for(int i = 0; i < N; i++)
+  {
+    readData >> fName;
+    readData >> lName;
+    readData >> obj.Balance;
+    name = fName + " " + lName;
+    strcpy(obj.Name, name.c_str());
+    a[i] = obj;
+  }
+  readData.close();
 }
