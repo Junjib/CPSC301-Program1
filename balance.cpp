@@ -1,3 +1,6 @@
+// Junji Bressan
+// 301 Section 1
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -17,58 +20,56 @@ void FindRichest(PERSON a[], int N);
 void Deposit(string name, PERSON a[], int N, float amount);
 void NewCopy(string file, PERSON a[], int N);
 int Counter(string file);
-void BuildArray(int N, PERSON a[], string file);
 PERSON * readData(int &N);
+void printmenu();
 
 int main()
 {
-	int N = 0;
+	int N = 0, choice;
   string name;
   float amount = 0.0;
   PERSON *personPtr = nullptr;
 
   personPtr = readData(N);
 
-  Display(personPtr, N);
-  FindRichest(personPtr, N);
-  Deposit(name, personPtr, N, amount);
+  do
+{
+    printmenu();
+    cin >> choice;
+    switch(choice)
+    {
+        case 1:
+            // Act on display
+            Display(personPtr, N);
+            break;
 
-  //BuildArray(N, arr, "data.txt");
+        case 2:
+            // Act on deposit
+            cin.ignore();
+            Deposit(name, personPtr, N, amount);
+            break;
 
-	// ===================================================
-	// Menu for selecting which function to execute
-	/*do
-	{
-		cout << "What would you like to do?\n";
-		cout << "Enter 1 to display the file.\n";
-		cout << "Enter 2 to find the richest.\n";
-		cout << "Enter 3 to deposit money into an account.\n";
-		cout << "Enter -1 to exit.\n";
-		cout << "Enter your choice: ";
-		cin >> choice;
-		cout << endl << endl;
+        case 3:
+            // Act highest balance
+            FindRichest(personPtr, N);
+            break;
 
-		switch(choice)
-		{
-		case 1:
-			Display(arr, N);
-			break;
-		case 2:
-			FindRichest(arr, N);
-			break;
-		case 3:
-			cout << "Enter your full name to deposit money: ";
-			cin.ignore();
-			getline(cin, fullName);
-			Deposit(fullName, arr, N);
-			NewCopy("data.txt", arr, N);
-			break;
-		case -1:
-			cout << "Exiting.\n";
-		}
+        case 4:
+            // Act on update records
+            NewCopy("data.txt", personPtr, N);
+            break;
 
-	}while(choice != -1);*/
+        case 5:
+            // Must call update records here before exiting the program
+            NewCopy("data.txt", personPtr, N);
+            break;
 
+        default:
+            cout << "Invalid entry" << endl;
+            break;
+    }
+    cout << endl;
+} while(choice != 5);
 	return 0;
 }
 
@@ -127,22 +128,27 @@ void FindRichest(PERSON a[], int N)
 
 void Deposit(string name, PERSON a[], int N, float amount)
 {
-  cout << "Enter name: ";
-  cin.ignore();
-  getline(cin, name);
-  cout << name << endl;
+  int recordCounter = 0;
 
-  cout << "Amount: ";
-  cin >> amount;
+  cout << "Enter name: ";
+  getline(cin, name);
 
 	for(int i = 0; i < N; i++)
 	{
 		if(name == a[i].Name)
 		{
+      cout << "Amount: ";
+      cin >> amount;
 			a[i].Balance += amount;
 			cout << "New balance: " << a[i].Balance << endl;
+      recordCounter++;
 		}
 	}
+
+  if(recordCounter == 0)
+  {
+    cout << "Record not found\n";
+  }
 	cout << endl;
 }
 
@@ -156,6 +162,7 @@ void NewCopy(string file, PERSON a[], int N)
 		writeData << a[i].Name << " " << fixed << setprecision(2) << a[i].Balance << endl;
 	}
 	writeData.close();
+  cout << "File Updated...\n";
 }
 
 int Counter(string file)
@@ -172,32 +179,6 @@ int Counter(string file)
   N--;
   readData2.close();
   return N;
-}
-
-void BuildArray(int N, PERSON a[], string file)
-{
-  PERSON obj;
-  string fName, lName, name;
-  ifstream readData;
-  readData.open("data.txt");
-
-  // Checks if file successfully opens
-  if(readData.fail())
-  {
-    cout << "Error\n";
-  }
-
-  // Stores PERSON obj into the PERSON array
-  for(int i = 0; i < N; i++)
-  {
-    readData >> fName;
-    readData >> lName;
-    readData >> obj.Balance;
-    name = fName + " " + lName;
-    strcpy(obj.Name, name.c_str());
-    a[i] = obj;
-  }
-  readData.close();
 }
 
 PERSON * readData(int &N)
@@ -233,4 +214,14 @@ PERSON * readData(int &N)
   }
 
   return personPtr;
+}
+
+void printmenu()
+{
+  cout << "Please enter a choice:" << endl;
+  cout << "1. Display records"<< endl;
+  cout << "2. Deposit funds"<< endl;
+  cout << "3. Find Highest Balance" << endl;
+  cout << "4. Update records" << endl;
+  cout << "5. Exit the program" << endl;
 }
